@@ -129,10 +129,19 @@ func main() {
 					}
 
 				} else {
+
+					var is_I string
+
+					if pkt.IsKeyFrame {
+						is_I = "I"
+					} else {
+						is_I = "B/P"
+					}
 					line := []string{
 						strconv.Itoa(v_cnt),
 						streams[pkt.Idx].Type().String(),
 						strconv.FormatBool(pkt.IsKeyFrame),
+						is_I,
 						strconv.Itoa(len(pkt.Data) + 5),
 						pkt.AVCPacketType,
 						pkt.NALUFormat,
@@ -149,6 +158,7 @@ func main() {
 
 			}
 		}
+		// table.Render() // Send output
 	}
 
 	table.Render() // Send output
