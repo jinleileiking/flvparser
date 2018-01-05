@@ -30,6 +30,8 @@ var (
 	show_i   = kingpin.Flag("keyframe", "Show audio").Short('i').Bool()
 )
 
+var last_ts int
+
 func main() {
 
 	kingpin.Version("0.0.1")
@@ -61,7 +63,7 @@ func main() {
 	var v_cnt int
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"No", "Type", "I", "DataSize", "AVC Packet Type", "NALU format", "NAL Ref Idc", "NAL_UNIT_TYPE"})
+	table.SetHeader([]string{"No", "Type", "I", "DataSize", "TS", "TS Diff", "AVC Packet Type", "NALU format", "NAL Ref Idc", "NAL_UNIT_TYPE"})
 	// table.SetBorder(false)
 
 	// for i := 0; i < 10000; i++ {
@@ -102,6 +104,8 @@ func main() {
 							streams[pkt.Idx].Type().String(),
 							strconv.FormatBool(pkt.IsKeyFrame),
 							strconv.Itoa(len(pkt.Data) + 5),
+							strconv.Itoa(int(pkt.Time) / 1000000),
+							strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
 							pkt.AVCPacketType,
 							pkt.NALUFormat,
 						}
@@ -128,21 +132,31 @@ func main() {
 						// fmt.Printf("\tCropLeft : %d\n", seq_hdr.SPSInfo.CropLeft)
 					}
 
-				} else {
+				} else { //no I
 
-					var is_I string
+					// var is_I string
 
-					if pkt.IsKeyFrame {
-						is_I = "I"
-					} else {
-						is_I = "B/P"
-					}
+					// if pkt.IsKeyFrame {
+					// 	is_I = "I"
+					// } else {
+					// 	is_I = "B/P"
+					// }
+					// line := []string{
+					// 	strconv.Itoa(v_cnt),
+					// 	streams[pkt.Idx].Type().String(),
+					// 	strconv.FormatBool(pkt.IsKeyFrame),
+					// 	is_I,
+					// 	strconv.Itoa(len(pkt.Data) + 5),
+					// 	pkt.AVCPacketType,
+					// 	pkt.NALUFormat,
+					// }
 					line := []string{
 						strconv.Itoa(v_cnt),
 						streams[pkt.Idx].Type().String(),
 						strconv.FormatBool(pkt.IsKeyFrame),
-						is_I,
 						strconv.Itoa(len(pkt.Data) + 5),
+						strconv.Itoa(int(pkt.Time) / 1000000),
+						strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
 						pkt.AVCPacketType,
 						pkt.NALUFormat,
 					}
@@ -158,6 +172,8 @@ func main() {
 
 			}
 		}
+
+		last_ts = int(pkt.Time) / 1000000
 		// table.Render() // Send output
 	}
 
