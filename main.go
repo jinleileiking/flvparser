@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"os"
 	"strconv"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/jinleileiking/joy4/av"
 	"github.com/jinleileiking/joy4/av/avutil"
-	"github.com/jinleileiking/joy4/codec/h264parser"
 	"github.com/jinleileiking/joy4/format"
 	// "github.com/nareix/joy4/av"
 	// "github.com/nareix/joy4/av/avutil"
@@ -28,6 +28,7 @@ var (
 	show_v   = kingpin.Flag("video", "Show video").Short('v').Bool()
 	show_a   = kingpin.Flag("audio", "Show audio").Short('a').Bool()
 	show_i   = kingpin.Flag("keyframe", "Show audio").Short('i').Bool()
+	show_sei = kingpin.Flag("sei infos", "Show sei infos").Short('s').Bool()
 )
 
 var last_ts int
@@ -63,7 +64,8 @@ func main() {
 	var v_cnt int
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"No", "Type", "I", "DataSize", "TS", "TS Diff", "AVC Packet Type", "NALU format", "NAL Ref Idc", "NAL_UNIT_TYPE"})
+	table.SetColWidth(80)
+	table.SetHeader([]string{"No", "Type", "I", "DataSize", "TS", "TS Diff", "AVC Packet Type", "NALU format", "NAL_UNIT_TYPE", "Num bytes", "NAL Ref Idc"})
 	// table.SetBorder(false)
 
 	// for i := 0; i < 10000; i++ {
@@ -97,77 +99,86 @@ func main() {
 			if streams[pkt.Idx].Type().String() == "H264" {
 
 				if *show_i {
-					if pkt.IsKeyFrame {
-
-						line := []string{
-							strconv.Itoa(v_cnt),
-							streams[pkt.Idx].Type().String(),
-							strconv.FormatBool(pkt.IsKeyFrame),
-							strconv.Itoa(len(pkt.Data) + 5),
-							strconv.Itoa(int(pkt.Time) / 1000000),
-							strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
-							pkt.AVCPacketType,
-							pkt.NALUFormat,
-						}
-
-						for _, info := range pkt.NALUInfos {
-							line = append(line, strconv.Itoa(info.RefIdc))
-							line = append(line, info.UnitType)
-						}
-
-						table.Append(line)
+					if !pkt.IsKeyFrame {
+						continue
 					}
-
-					if pkt.AVCPacketType == "SEQHDR" {
-						seq_hdr := streams[pkt.Idx].(h264parser.CodecData)
-						fmt.Println("SPS:")
-						spew.Dump(seq_hdr.SPSInfo)
-						// fmt.Printf("\tWidth : %d\n", seq_hdr.SPSInfo.Width)
-						// fmt.Printf("\tHeight : %d\n", seq_hdr.SPSInfo.Height)
-						// fmt.Printf("\tProfileIdc : %d\n", seq_hdr.SPSInfo.ProfileIdc)
-						// fmt.Printf("\tLevelIdc : %d\n", seq_hdr.SPSInfo.LevelIdc)
-						// fmt.Printf("\tMbWidth : %d\n", seq_hdr.SPSInfo.MbWidth)
-						// fmt.Printf("\tMbHeight : %d\n", seq_hdr.SPSInfo.MbHeight)
-						// fmt.Printf("\tCropLeft : %d\n", seq_hdr.SPSInfo.CropLeft)
-						// fmt.Printf("\tCropLeft : %d\n", seq_hdr.SPSInfo.CropLeft)
-					}
-
-				} else { //no I
-
-					// var is_I string
-
-					// if pkt.IsKeyFrame {
-					// 	is_I = "I"
-					// } else {
-					// 	is_I = "B/P"
-					// }
-					// line := []string{
-					// 	strconv.Itoa(v_cnt),
-					// 	streams[pkt.Idx].Type().String(),
-					// 	strconv.FormatBool(pkt.IsKeyFrame),
-					// 	is_I,
-					// 	strconv.Itoa(len(pkt.Data) + 5),
-					// 	pkt.AVCPacketType,
-					// 	pkt.NALUFormat,
-					// }
-					line := []string{
-						strconv.Itoa(v_cnt),
-						streams[pkt.Idx].Type().String(),
-						strconv.FormatBool(pkt.IsKeyFrame),
-						strconv.Itoa(len(pkt.Data) + 5),
-						strconv.Itoa(int(pkt.Time) / 1000000),
-						strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
-						pkt.AVCPacketType,
-						pkt.NALUFormat,
-					}
-
-					for _, info := range pkt.NALUInfos {
-						line = append(line, strconv.Itoa(info.RefIdc))
-						line = append(line, info.UnitType)
-					}
-
-					table.Append(line)
 				}
+
+				// line := []string{
+				// 	strconv.Itoa(v_cnt),
+				// 	streams[pkt.Idx].Type().String(),
+				// 	strconv.FormatBool(pkt.IsKeyFrame),
+				// 	strconv.Itoa(len(pkt.Data) + 5),
+				// 	strconv.Itoa(int(pkt.Time) / 1000000),
+				// 	strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
+				// 	pkt.AVCPacketType,
+				// 	pkt.NALUFormat,
+				// }
+
+				// for _, info := range pkt.NALUInfos {
+				// 	line = append(line, strconv.Itoa(info.NumBytes))
+				// 	line = append(line, strconv.Itoa(info.RefIdc))
+				// 	line = append(line, info.UnitType)
+				// }
+
+				// table.Append(line)
+				// }
+
+				// if pkt.AVCPacketType == "SEQHDR" {
+				// line = append(line, info.UnitType)
+				// line = append(line, strconv.Itoa(info.NumBytes))
+				// line = append(line, strconv.Itoa(info.RefIdc))
+				// // fmt.Printf("\tWidth : %d\n", seq_hdr.SPSInfo.Width)
+				// // fmt.Printf("\tHeight : %d\n", seq_hdr.SPSInfo.Height)
+				// // fmt.Printf("\tProfileIdc : %d\n", seq_hdr.SPSInfo.ProfileIdc)
+				// // fmt.Printf("\tLevelIdc : %d\n", seq_hdr.SPSInfo.LevelIdc)
+				// // fmt.Printf("\tMbWidth : %d\n", seq_hdr.SPSInfo.MbWidth)
+				// // fmt.Printf("\tMbHeight : %d\n", seq_hdr.SPSInfo.MbHeight)
+				// // fmt.Printf("\tCropLeft : %d\n", seq_hdr.SPSInfo.CropLeft)
+				// // fmt.Printf("\tCropLeft : %d\n", seq_hdr.SPSInfo.CropLeft)
+				// }
+
+				// } else { //no I
+
+				// var is_I string
+
+				// if pkt.IsKeyFrame {
+				// 	is_I = "I"
+				// } else {
+				// 	is_I = "B/P"
+				// }
+				// line := []string{
+				// 	strconv.Itoa(v_cnt),
+				// 	streams[pkt.Idx].Type().String(),
+				// 	strconv.FormatBool(pkt.IsKeyFrame),
+				// 	is_I,
+				// 	strconv.Itoa(len(pkt.Data) + 5),
+				// 	pkt.AVCPacketType,
+				// 	pkt.NALUFormat,
+				// }
+				line := []string{
+					strconv.Itoa(v_cnt),
+					streams[pkt.Idx].Type().String(),
+					strconv.FormatBool(pkt.IsKeyFrame),
+					strconv.Itoa(len(pkt.Data) + 5),
+					strconv.Itoa(int(pkt.Time) / 1000000),
+					strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
+					pkt.AVCPacketType,
+					pkt.NALUFormat,
+				}
+
+				for _, info := range pkt.NALUInfos {
+					line = append(line, info.UnitType)
+					line = append(line, strconv.Itoa(info.NumBytes))
+					line = append(line, strconv.Itoa(info.RefIdc))
+
+					if *show_sei && info.UnitType == "SEI" {
+						line = append(line, hex.Dump(info.Data))
+					}
+				}
+
+				table.Append(line)
+				// }
 				// fmt.Println("video tag", v_cnt, streams[pkt.Idx].Type(), "len", len(pkt.Data), "keyframe", pkt.IsKeyFrame)
 
 			}
