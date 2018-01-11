@@ -172,6 +172,14 @@ func main() {
 					line = append(line, strconv.Itoa(info.NumBytes))
 					line = append(line, strconv.Itoa(info.RefIdc))
 
+					if info.UnitType == "N-IDR" ||
+						info.UnitType == "SliceA" ||
+						info.UnitType == "SliceB" ||
+						info.UnitType == "SliceC" ||
+						info.UnitType == "IDR" {
+						line = append(line, info.SliceType)
+					}
+
 					if *show_sei && info.UnitType == "SEI" {
 						line = append(line, hex.Dump(info.Data))
 					}
