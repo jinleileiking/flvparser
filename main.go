@@ -102,7 +102,7 @@ func main() {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetColWidth(80)
 	// table.SetBorder(false)
-	headers := []string{"NF"}
+	headers := []string{"PTS", "DTS"}
 	defer func() {
 		table.Render() // Send output
 		file.Close()
@@ -112,8 +112,8 @@ func main() {
 
 		// header := []string{"T", "L", "IDC"}
 
-		for _, payload := range td.Payloads {
-			nalues := h264parser.ParseNALUs(payload)
+		for _, payload := range td.PayloadInfos {
+			nalues := h264parser.ParseNALUs(payload.PayloadInfo)
 			// spew.Dump(nalues)
 
 			line := []string{
@@ -127,6 +127,8 @@ func main() {
 			// pkt.NALUFormat,
 			}
 
+			line = append(line, strconv.Itoa(payload.Pts/1000))
+			line = append(line, strconv.Itoa(payload.Dts/1000))
 			line = append(line, nalues.NALUFormat)
 			for _, info := range nalues.Infos {
 				line = append(line, info.UnitType)
@@ -148,6 +150,42 @@ func main() {
 			// headers = append(headers, header...)
 			table.Append(line)
 		}
+		// for _, payload := range td.Payloads {
+		// 	nalues := h264parser.ParseNALUs(payload)
+		// 	// spew.Dump(nalues)
+
+		// 	line := []string{
+		// 	// strconv.Itoa(v_cnt),
+		// 	// streams[pkt.Idx].Type().String(),
+		// 	// strconv.FormatBool(pkt.IsKeyFrame),
+		// 	// strconv.Itoa(len(pkt.Data) + 5),
+		// 	// strconv.Itoa(int(pkt.Time) / 1000000),
+		// 	// strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
+		// 	// pkt.AVCPacketType,
+		// 	// pkt.NALUFormat,
+		// 	}
+
+		// 	line = append(line, nalues.NALUFormat)
+		// 	for _, info := range nalues.Infos {
+		// 		line = append(line, info.UnitType)
+		// 		line = append(line, strconv.Itoa(info.NumBytes))
+		// 		line = append(line, strconv.Itoa(info.RefIdc))
+
+		// 		if info.UnitType == "N-IDR" ||
+		// 			info.UnitType == "SliceA" ||
+		// 			info.UnitType == "SliceB" ||
+		// 			info.UnitType == "SliceC" ||
+		// 			info.UnitType == "IDR" {
+		// 			line = append(line, info.SliceType)
+		// 		}
+
+		// 		if *show_sei && info.UnitType == "SEI" {
+		// 			line = append(line, hex.Dump(info.Data))
+		// 		}
+		// 	}
+		// 	// headers = append(headers, header...)
+		// 	table.Append(line)
+		// }
 
 		table.SetHeader(headers)
 		return
