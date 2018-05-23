@@ -26,11 +26,12 @@ func init() {
 }
 
 var (
-	filename = kingpin.Arg("file", "flv / ts file").Required().String()
-	show_v   = kingpin.Flag("video", "Show video").Short('v').Bool()
-	show_a   = kingpin.Flag("audio", "Show audio").Short('a').Bool()
-	show_i   = kingpin.Flag("keyframe", "Show audio").Short('i').Bool()
-	show_sei = kingpin.Flag("sei infos", "Show sei infos").Short('s').Bool()
+	filename       = kingpin.Arg("file", "flv / ts file").Required().String()
+	show_v         = kingpin.Flag("video", "Show video").Short('v').Bool()
+	show_a         = kingpin.Flag("audio", "Show audio").Short('a').Bool()
+	show_i         = kingpin.Flag("keyframe", "Show audio").Short('i').Bool()
+	show_sei       = kingpin.Flag("sei infos", "Show sei infos").Short('s').Bool()
+	show_only_nalt = kingpin.Flag("only show nal type", "only show nal type").Short('t').Bool()
 )
 
 var last_ts int
@@ -132,20 +133,22 @@ func main() {
 			line = append(line, nalues.NALUFormat)
 			for _, info := range nalues.Infos {
 				line = append(line, info.UnitType)
-				line = append(line, strconv.Itoa(info.NumBytes))
-				line = append(line, strconv.Itoa(info.RefIdc))
 
-				if info.UnitType == "N-IDR" ||
-					info.UnitType == "SliceA" ||
-					info.UnitType == "SliceB" ||
-					info.UnitType == "SliceC" ||
-					info.UnitType == "IDR" {
-					line = append(line, info.SliceType)
+				if !*show_only_nalt {
+					line = append(line, strconv.Itoa(info.NumBytes))
+					line = append(line, strconv.Itoa(info.RefIdc))
+					if info.UnitType == "N-IDR" ||
+						info.UnitType == "SliceA" ||
+						info.UnitType == "SliceB" ||
+						info.UnitType == "SliceC" ||
+						info.UnitType == "IDR" {
+						line = append(line, info.SliceType)
+					}
+					if *show_sei && info.UnitType == "SEI" {
+						line = append(line, hex.Dump(info.Data))
+					}
 				}
 
-				if *show_sei && info.UnitType == "SEI" {
-					line = append(line, hex.Dump(info.Data))
-				}
 			}
 			// headers = append(headers, header...)
 			table.Append(line)
@@ -232,27 +235,32 @@ func main() {
 					strconv.FormatBool(pkt.IsKeyFrame),
 					strconv.Itoa(int(pkt.Timestamp)),
 					strconv.Itoa(int(pkt.Time) / 1000000),
-					strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
+					strconv.Itoa(int(pkt.Timestamp) - last_ts),
 					strconv.Itoa(len(pkt.Data) + 5),
 					pkt.AVCPacketType,
 					pkt.NALUFormat,
 				}
+				last_ts = int(pkt.Timestamp)
+				spew.Dump(pkt.Timestamp, last_ts)
 
 				for _, info := range pkt.NALUInfos {
 					line = append(line, info.UnitType)
-					line = append(line, strconv.Itoa(info.NumBytes))
-					line = append(line, strconv.Itoa(info.RefIdc))
 
-					if info.UnitType == "(1)N-IDR" ||
-						info.UnitType == "(2)SliceA" ||
-						info.UnitType == "(3)SliceB" ||
-						info.UnitType == "(4)SliceC" ||
-						info.UnitType == "(5)IDR" {
-						line = append(line, info.SliceType)
-					}
+					if !*show_only_nalt {
+						line = append(line, strconv.Itoa(info.NumBytes))
+						line = append(line, strconv.Itoa(info.RefIdc))
 
-					if *show_sei && info.UnitType == "SEI" {
-						line = append(line, hex.Dump(info.Data))
+						if info.UnitType == "(1)N-IDR" ||
+							info.UnitType == "(2)SliceA" ||
+							info.UnitType == "(3)SliceB" ||
+							info.UnitType == "(4)SliceC" ||
+							info.UnitType == "(5)IDR" {
+							line = append(line, info.SliceType)
+						}
+
+						if *show_sei && info.UnitType == "SEI" {
+							line = append(line, hex.Dump(info.Data))
+						}
 					}
 				}
 
@@ -261,7 +269,7 @@ func main() {
 			}
 		}
 
-		last_ts = int(pkt.Time) / 1000000
+		// last_ts = int(pkt.Time) / 1000000
 	}
 
 }
