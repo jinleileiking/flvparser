@@ -27,19 +27,31 @@
 
 [[constraint]]
   branch = "master"
+  name = "github.com/alecthomas/template"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/alecthomas/units"
+
+[[constraint]]
   name = "github.com/davecgh/go-spew"
+  version = "1.1.0"
 
 [[constraint]]
   branch = "master"
   name = "github.com/jinleileiking/joy4"
 
 [[constraint]]
+  name = "github.com/mattn/go-runewidth"
+  version = "0.0.2"
+
+[[constraint]]
   branch = "master"
   name = "github.com/olekukonko/tablewriter"
 
 [[constraint]]
-  branch = "master"
   name = "gopkg.in/alecthomas/kingpin.v2"
+  version = "2.2.6"
 
 [prune]
   go-tests = true

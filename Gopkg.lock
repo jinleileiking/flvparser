@@ -17,10 +17,10 @@
   revision = "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a"
 
 [[projects]]
-  branch = "master"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
-  revision = "ecdeabc65495df2dec95d7c4a4c3e021903035e5"
+  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
@@ -47,29 +47,29 @@
     "utils/bits",
     "utils/bits/pio"
   ]
-  revision = "e931de714e0e0bde2ec5e42ec0e6a3f13a696611"
+  revision = "aa1df0adc869a10b63b8da59fdcf8be7d316cb3a"
 
 [[projects]]
-  branch = "master"
   name = "github.com/mattn/go-runewidth"
   packages = ["."]
-  revision = "97311d9f7767e3d6f422ea06661bc2c7a19e8a5d"
+  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
+  version = "v0.0.2"
 
 [[projects]]
   branch = "master"
   name = "github.com/olekukonko/tablewriter"
   packages = ["."]
-  revision = "b8a9be070da40449e501c3c4730a889e42d87a9e"
+  revision = "d4647c9c7a84d847478d890b816b7d8b62b0b279"
 
 [[projects]]
-  branch = "master"
   name = "gopkg.in/alecthomas/kingpin.v2"
   packages = ["."]
-  revision = "1087e65c9441605df944fb12c33f0fe7072d18ca"
+  revision = "947dcec5ba9c011838740e680966fd7087a71d0d"
+  version = "v2.2.6"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "fafbcecc9c5d6900149130d0ef423311219b798afe9ebcf3580d9703631ab9fb"
+  inputs-digest = "70443b6dfb973d597329633c0c125992d5d6d2557978d70ae2633260473c2903"
   solver-name = "gps-cdcl"
   solver-version = 1

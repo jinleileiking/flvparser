@@ -192,7 +192,7 @@ func main() {
 	}
 
 	//flv
-	table.SetHeader([]string{"No", "Type", "I", "DataSize", "TS", "TS Diff", "AVC Packet Type", "NALU format", "NAL_UNIT_TYPE", "Num bytes", "NAL Ref Idc"})
+	table.SetHeader([]string{"No", "Type", "I", "FLVTS", "TS", "TS Diff", "DataSize", "AVC Packet Type", "NALU format", "NAL_UNIT_TYPE", "Num bytes", "NAL Ref Idc"})
 	for true {
 		var pkt av.Packet
 		var err error
@@ -228,9 +228,10 @@ func main() {
 					strconv.Itoa(v_cnt),
 					streams[pkt.Idx].Type().String(),
 					strconv.FormatBool(pkt.IsKeyFrame),
-					strconv.Itoa(len(pkt.Data) + 5),
+					strconv.Itoa(int(pkt.Timestamp)),
 					strconv.Itoa(int(pkt.Time) / 1000000),
 					strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
+					strconv.Itoa(len(pkt.Data) + 5),
 					pkt.AVCPacketType,
 					pkt.NALUFormat,
 				}
