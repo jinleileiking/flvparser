@@ -241,7 +241,7 @@ func main() {
 					pkt.NALUFormat,
 				}
 				last_ts = int(pkt.Timestamp)
-				spew.Dump(pkt.Timestamp, last_ts)
+				// spew.Dump(pkt.Timestamp, last_ts)
 
 				for _, info := range pkt.NALUInfos {
 					line = append(line, info.UnitType)
