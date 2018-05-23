@@ -192,7 +192,9 @@ func main() {
 	}
 
 	//flv
-	table.SetHeader([]string{"No", "Type", "I", "FLVTS", "TS", "TS Diff", "DataSize", "AVC Packet Type", "NALU format", "NAL_UNIT_TYPE", "Num bytes", "NAL Ref Idc"})
+	// table.SetHeader([]string{"No", "Type", "I", "FLVTS", "TS", "TS Diff", "DataSize", "AVC Packet Type", "NALU format", "NAL_UNIT_TYPE", "Num bytes", "NAL Ref Idc"})
+	table.SetHeader([]string{"No", "Type", "I", "FLVTS", "TS", "TS Diff", "DataSize", "AVC Packet Type", "NALU format",
+		"NUT", "BYTES", "Idc"})
 	for true {
 		var pkt av.Packet
 		var err error
@@ -241,11 +243,11 @@ func main() {
 					line = append(line, strconv.Itoa(info.NumBytes))
 					line = append(line, strconv.Itoa(info.RefIdc))
 
-					if info.UnitType == "N-IDR" ||
-						info.UnitType == "SliceA" ||
-						info.UnitType == "SliceB" ||
-						info.UnitType == "SliceC" ||
-						info.UnitType == "IDR" {
+					if info.UnitType == "(1)N-IDR" ||
+						info.UnitType == "(2)SliceA" ||
+						info.UnitType == "(3)SliceB" ||
+						info.UnitType == "(4)SliceC" ||
+						info.UnitType == "(5)IDR" {
 						line = append(line, info.SliceType)
 					}
 

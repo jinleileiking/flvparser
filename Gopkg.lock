@@ -47,7 +47,7 @@
     "utils/bits",
     "utils/bits/pio"
   ]
-  revision = "aa1df0adc869a10b63b8da59fdcf8be7d316cb3a"
+  revision = "5977273146ad486e21ad0b62a78a6252b83837e2"
 
 [[projects]]
   name = "github.com/mattn/go-runewidth"
@@ -70,6 +70,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "70443b6dfb973d597329633c0c125992d5d6d2557978d70ae2633260473c2903"
+  inputs-digest = "f8b542dc81001cc1c6f6b84e63fd5487b2541508d3ea9911f9d63a75cd752175"
   solver-name = "gps-cdcl"
   solver-version = 1
