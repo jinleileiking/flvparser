@@ -6,9 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
-
 	"github.com/davecgh/go-spew/spew"
+	"github.com/spf13/cobra"
 
 	"github.com/jinleileiking/joy4/av"
 	"github.com/jinleileiking/joy4/av/avutil"
@@ -25,24 +24,16 @@ func init() {
 	format.RegisterAll()
 }
 
-var (
-	filename       = kingpin.Arg("file", "flv / ts file").Required().String()
-	show_v         = kingpin.Flag("video", "Show video").Short('v').Bool()
-	show_a         = kingpin.Flag("audio", "Show audio").Short('a').Bool()
-	show_i         = kingpin.Flag("keyframe", "Show audio").Short('i').Bool()
-	show_sei       = kingpin.Flag("sei infos", "Show sei infos").Short('s').Bool()
-	show_only_nalt = kingpin.Flag("only show nal type", "only show nal type").Short('t').Bool()
-)
+var rootCmd = &cobra.Command{
+	Use:   "flvparser",
+	Short: "A stupid ugly flv / ts file parser",
+	Run:   cmdrun,
+}
 
 var last_ts int
 
-func main() {
-
-	kingpin.Version("0.0.1")
-	kingpin.Parse()
-	// fmt.Printf("file: %s \n", *filename)
-
-	file, err := avutil.Open(*filename)
+func cmdrun(cmd *cobra.Command, args []string) {
+	file, err := avutil.Open(filename)
 
 	if err != nil {
 		fmt.Println("Open file failed, detail:", err.Error())
@@ -118,14 +109,14 @@ func main() {
 			// spew.Dump(nalues)
 
 			line := []string{
-			// strconv.Itoa(v_cnt),
-			// streams[pkt.Idx].Type().String(),
-			// strconv.FormatBool(pkt.IsKeyFrame),
-			// strconv.Itoa(len(pkt.Data) + 5),
-			// strconv.Itoa(int(pkt.Time) / 1000000),
-			// strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
-			// pkt.AVCPacketType,
-			// pkt.NALUFormat,
+				// strconv.Itoa(v_cnt),
+				// streams[pkt.Idx].Type().String(),
+				// strconv.FormatBool(pkt.IsKeyFrame),
+				// strconv.Itoa(len(pkt.Data) + 5),
+				// strconv.Itoa(int(pkt.Time) / 1000000),
+				// strconv.Itoa(int(pkt.Time)/1000000 - last_ts),
+				// pkt.AVCPacketType,
+				// pkt.NALUFormat,
 			}
 
 			line = append(line, strconv.Itoa(payload.Pts/1000))
@@ -134,7 +125,7 @@ func main() {
 			for _, info := range nalues.Infos {
 				line = append(line, info.UnitType)
 
-				if !*show_only_nalt {
+				if !show_only_nalt {
 					line = append(line, strconv.Itoa(info.NumBytes))
 					line = append(line, strconv.Itoa(info.RefIdc))
 					if info.UnitType == "N-IDR" ||
@@ -144,7 +135,7 @@ func main() {
 						info.UnitType == "IDR" {
 						line = append(line, info.SliceType)
 					}
-					if *show_sei && info.UnitType == "SEI" {
+					if show_sei && info.UnitType == "SEI" {
 						line = append(line, hex.Dump(info.Data))
 					}
 				}
@@ -214,16 +205,16 @@ func main() {
 			a_cnt = a_cnt + 1
 		}
 
-		if *show_a {
+		if show_a {
 			if streams[pkt.Idx].Type().String() == "AAC" {
 				table.Append([]string{strconv.Itoa(v_cnt), streams[pkt.Idx].Type().String(), strconv.FormatBool(pkt.IsKeyFrame), strconv.Itoa(len(pkt.Data) + 5), pkt.AVCPacketType})
 			}
 		}
 
-		if *show_v {
+		if show_v {
 			if streams[pkt.Idx].Type().String() == "H264" {
 
-				if *show_i {
+				if show_i {
 					if !pkt.IsKeyFrame {
 						continue
 					}
@@ -246,7 +237,7 @@ func main() {
 				for _, info := range pkt.NALUInfos {
 					line = append(line, info.UnitType)
 
-					if !*show_only_nalt {
+					if !show_only_nalt {
 						line = append(line, strconv.Itoa(info.NumBytes))
 						line = append(line, strconv.Itoa(info.RefIdc))
 
@@ -258,7 +249,7 @@ func main() {
 							line = append(line, info.SliceType)
 						}
 
-						if *show_sei && info.UnitType == "SEI" {
+						if show_sei && info.UnitType == "SEI" {
 							line = append(line, hex.Dump(info.Data))
 						}
 					}
@@ -272,4 +263,26 @@ func main() {
 		// last_ts = int(pkt.Time) / 1000000
 	}
 
+}
+
+var show_sei bool
+var show_v bool
+var show_a bool
+var show_i bool
+var show_only_nalt bool
+var filename string
+
+func setup_cmd() {
+	rootCmd.PersistentFlags().StringVarP(&filename, "file", "f", "", "flv / ts file")
+	rootCmd.PersistentFlags().BoolVar(&show_sei, "sei", false, "show sei info")
+	rootCmd.PersistentFlags().BoolVar(&show_only_nalt, "simple", false, "only show nal type")
+	rootCmd.PersistentFlags().BoolVar(&show_a, "a", false, "show audio")
+	rootCmd.PersistentFlags().BoolVar(&show_v, "v", true, "show video")
+	rootCmd.PersistentFlags().BoolVar(&show_i, "i", true, "use with -v: show keyframes only")
+	rootCmd.MarkFlagRequired("file")
+}
+
+func main() {
+	setup_cmd()
+	rootCmd.Execute()
 }
