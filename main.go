@@ -214,7 +214,7 @@ func cmdrun(cmd *cobra.Command, args []string) {
 		if show_v {
 			if streams[pkt.Idx].Type().String() == "H264" {
 
-				if show_i {
+				if !no_show_i {
 					if !pkt.IsKeyFrame {
 						continue
 					}
@@ -268,7 +268,7 @@ func cmdrun(cmd *cobra.Command, args []string) {
 var show_sei bool
 var show_v bool
 var show_a bool
-var show_i bool
+var no_show_i bool
 var show_only_nalt bool
 var filename string
 
@@ -278,7 +278,7 @@ func setup_cmd() {
 	rootCmd.PersistentFlags().BoolVar(&show_only_nalt, "simple", false, "only show nal type")
 	rootCmd.PersistentFlags().BoolVar(&show_a, "a", false, "show audio")
 	rootCmd.PersistentFlags().BoolVar(&show_v, "v", true, "show video")
-	rootCmd.PersistentFlags().BoolVar(&show_i, "i", true, "use with -v: show keyframes only")
+	rootCmd.PersistentFlags().BoolVar(&no_show_i, "non-key", false, "use with -v:  do not show keyframes")
 	rootCmd.MarkFlagRequired("file")
 }
 
