@@ -34,6 +34,11 @@ var rootCmd = &cobra.Command{
 var last_ts int
 
 func cmdrun(cmd *cobra.Command, args []string) {
+	if filename == "" {
+		fmt.Println("must with -f, please pass filename")
+		os.Exit(0)
+	}
+
 	file, err := avutil.Open(filename)
 
 	if err != nil {
@@ -274,13 +279,13 @@ var show_only_nalt bool
 var filename string
 
 func setup_cmd() {
-	rootCmd.PersistentFlags().StringVarP(&filename, "file", "f", "", "flv / ts file")
+	rootCmd.PersistentFlags().StringVarP(&filename, "file", "f", "", "flv / ts file, required")
 	rootCmd.PersistentFlags().BoolVar(&show_sei, "sei", false, "show sei info")
 	rootCmd.PersistentFlags().BoolVar(&show_only_nalt, "simple", false, "only show nal type")
 	rootCmd.PersistentFlags().BoolVar(&show_a, "a", false, "show audio")
-	rootCmd.PersistentFlags().BoolVar(&show_v, "v", true, "show video,  default:true")
+	rootCmd.PersistentFlags().BoolVar(&show_v, "v", true, "show video")
 	rootCmd.PersistentFlags().BoolVar(&no_show_i, "non-key", false, "use with -v:  show BP frames")
-	rootCmd.MarkFlagRequired("file")
+	rootCmd.MarkFlagRequired("f")
 }
 
 func main() {
