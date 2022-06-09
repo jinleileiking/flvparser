@@ -1,73 +1,50 @@
 # flvparser
 
 ```
-➜  flvparser git:(master) ✗ go run main.go ~/live_140400463_4440104.flv  --help
-usage: main [<flags>] <file>
+A stupid ugly flv / ts file parser
+
+Usage:
+  flvparser [flags]
 
 Flags:
-      --help      Show context-sensitive help (also try --help-long and --help-man).
-  -v, --video     Show video
-  -a, --audio     Show audio
-  -i, --keyframe  Show audio
-      --version   Show application version.
-
-Args:
+      --a             show audio
+  -f, --file string   flv / ts file
+  -h, --help          help for flvparser
+      --non-key       use with -v:  do not show keyframes
+      --sei           show sei info
+      --simple        only show nal type
+      --v             show video (default true)
 ```
 
 ```
-➜  flvparser git:(master) ✗ go run main.go ~/live_140400463_4440104.flv  -i  -v
-SPS:
-(h264parser.SPSInfo) {
- ProfileIdc: (uint) 77,
- LevelIdc: (uint) 30,
- MbWidth: (uint) 30,
- MbHeight: (uint) 54,
- CropLeft: (uint) 0,
- CropRight: (uint) 0,
- CropTop: (uint) 0,
- CropBottom: (uint) 2,
- Width: (uint) 480,
- Height: (uint) 860
-}
-(*errors.errorString)(0xc42005e060)(EOF)
-+-----+------+------+----------+-----------------+-------------+-------------+---------------+
-| NO  | TYPE |  I   | DATASIZE | AVC PACKET TYPE | NALU FORMAT | NAL REF IDC | NAL UNIT TYPE |
-+-----+------+------+----------+-----------------+-------------+-------------+---------------+
-|   1 | H264 | true |       30 | SEQHDR          |             |
-|   2 | H264 | true |    28815 | NALU            | AVCC        |           0 | IDR           |
-|  52 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-|  53 | H264 | true |    22159 | NALU            | AVCC        |           0 | IDR           |
-| 103 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 104 | H264 | true |    19598 | NALU            | AVCC        |           0 | IDR           |
-| 154 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 155 | H264 | true |    25373 | NALU            | AVCC        |           0 | IDR           |
-| 205 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 206 | H264 | true |    19279 | NALU            | AVCC        |           0 | IDR           |
-| 256 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 257 | H264 | true |    15847 | NALU            | AVCC        |           0 | IDR           |
-| 307 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 308 | H264 | true |    20169 | NALU            | AVCC        |           0 | IDR           |
-| 358 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 359 | H264 | true |    26105 | NALU            | AVCC        |           0 | IDR           |
-| 409 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 410 | H264 | true |    20325 | NALU            | AVCC        |           0 | IDR           |
-| 460 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 461 | H264 | true |    20002 | NALU            | AVCC        |           0 | IDR           |
-| 511 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 512 | H264 | true |    26779 | NALU            | AVCC        |           0 | IDR           |
-| 562 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 563 | H264 | true |    15725 | NALU            | AVCC        |           0 | IDR           |
-| 613 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 614 | H264 | true |    20948 | NALU            | AVCC        |           0 | IDR           |
-| 664 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 665 | H264 | true |    23362 | NALU            | AVCC        |           0 | IDR           |
-| 715 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 716 | H264 | true |    23604 | NALU            | AVCC        |           0 | IDR           |
-| 766 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 767 | H264 | true |    27053 | NALU            | AVCC        |           0 | IDR           |
-| 817 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 818 | H264 | true |    26764 | NALU            | AVCC        |           0 | IDR           |
-| 868 | H264 | true |       40 | NALU            | AVCC        |           0 | SEI           |
-| 869 | H264 | true |    23499 | NALU            | AVCC        |           0 | IDR           |
-+-----+------+------+----------+-----------------+-------------+-------------+---------------+
+./flvparser -f  ~/visionular/avfiles/s.flv --non-key    
+(*errors.errorString)(0xc000110060)(EOF)
+Parsed done
++------+------+-------+--------+--------+---------+----------+-----------------+-------------+----------+-------+-----+--------+------+---+---+
+|  NO  | TYPE |   I   | FLVTS  |   TS   | TS DIFF | DATASIZE | AVC PACKET TYPE | NALU FORMAT |   NUT    | BYTES | IDC |        |      |   |   |
++------+------+-------+--------+--------+---------+----------+-----------------+-------------+----------+-------+-----+--------+------+---+---+
+|    1 | H264 | true  |      0 |      0 |       0 |       46 | SEQHDR          |             |
+|    2 | H264 | true  |      0 |      0 |       0 |     5137 | NALU            | AVCC        | (6)SEI   |   688 |   0 | (5)IDR | 4436 | 0 | I |
+|    3 | H264 | false |     40 |     40 |      40 |      132 | NALU            | AVCC        | (1)N-IDR |   123 |   0 | P      |
+|    4 | H264 | false |     80 |     80 |      40 |      989 | NALU            | AVCC        | (1)N-IDR |   980 |   0 | P      |
+|    5 | H264 | false |    120 |    120 |      40 |       55 | NALU            | AVCC        | (1)N-IDR |    46 |   0 | B      |
+|    6 | H264 | false |    160 |    160 |      40 |       62 | NALU            | AVCC        | (1)N-IDR |    53 |   0 | B      |
+|    7 | H264 | false |    200 |    200 |      40 |       25 | NALU            | AVCC        | (1)N-IDR |    16 |   0 | B      |
+|    8 | H264 | false |    240 |    240 |      40 |      193 | NALU            | AVCC        | (1)N-IDR |   184 |   0 | P      |
+|    9 | H264 | false |    280 |    280 |      40 |       40 | NALU            | AVCC        | (1)N-IDR |    31 |   0 | B      |
+|   10 | H264 | false |    320 |    320 |      40 |       30 | NALU            | AVCC        | (1)N-IDR |    21 |   0 | B      |
+|   11 | H264 | false |    360 |    360 |      40 |       24 | NALU            | AVCC        | (1)N-IDR |    15 |   0 | B      |
+|   12 | H264 | false |    400 |    400 |      40 |       73 | NALU            | AVCC        | (1)N-IDR |    64 |   0 | P      |
+|   13 | H264 | false |    440 |    440 |      40 |       26 | NALU            | AVCC        | (1)N-IDR |    17 |   0 | B      |
+|   14 | H264 | false |    480 |    480 |      40 |       23 | NALU            | AVCC        | (1)N-IDR |    14 |   0 | B      |
+|   15 | H264 | false |    520 |    520 |      40 |       25 | NALU            | AVCC        | (1)N-IDR |    16 |   0 | B      |
+|   16 | H264 | false |    560 |    560 |      40 |      439 | NALU            | AVCC        | (1)N-IDR |   430 |   0 | P      |
+|   17 | H264 | false |    600 |    600 |      40 |     3008 | NALU            | AVCC        | (1)N-IDR |  2999 |   0 | P      |
+|   18 | H264 | false |    640 |    640 |      40 |      604 | NALU            | AVCC        | (1)N-IDR |   595 |   0 | P      |
+|   19 | H264 | false |    680 |    680 |      40 |       28 | NALU            | AVCC        | (1)N-IDR |    19 |   0 | B      |
+|   20 | H264 | false |    720 |    720 |      40 |       58 | NALU            | AVCC        | (1)N-IDR |    49 |   0 | B      |
+|   21 | H264 | false |    760 |    760 |      40 |       25 | NALU            | AVCC        | (1)N-IDR |    16 |   0 | B      |
+|   22 | H264 | false |    800 |    800 |      40 |     3429 | NALU            | AVCC        | (1)N-IDR |  3420 |   0 | P      |
+|   23 | H264 | false |    840 |    840 |      40 |       64 | NALU            | AVCC        | (1)N-IDR |    55 |   0 | B      |
+
 ```

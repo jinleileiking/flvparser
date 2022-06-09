@@ -1,0 +1,46 @@
+# github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
+## explicit
+# github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf
+## explicit
+# github.com/davecgh/go-spew v1.1.0
+## explicit
+github.com/davecgh/go-spew/spew
+# github.com/inconshreveable/mousetrap v1.0.0
+## explicit
+github.com/inconshreveable/mousetrap
+# github.com/jinleileiking/joy4 v0.0.0-20180523051439-5977273146ad
+## explicit
+github.com/jinleileiking/joy4/av
+github.com/jinleileiking/joy4/av/avutil
+github.com/jinleileiking/joy4/codec
+github.com/jinleileiking/joy4/codec/aacparser
+github.com/jinleileiking/joy4/codec/fake
+github.com/jinleileiking/joy4/codec/h264parser
+github.com/jinleileiking/joy4/common
+github.com/jinleileiking/joy4/format
+github.com/jinleileiking/joy4/format/aac
+github.com/jinleileiking/joy4/format/flv
+github.com/jinleileiking/joy4/format/flv/flvio
+github.com/jinleileiking/joy4/format/mp4
+github.com/jinleileiking/joy4/format/mp4/mp4io
+github.com/jinleileiking/joy4/format/rtmp
+github.com/jinleileiking/joy4/format/rtsp
+github.com/jinleileiking/joy4/format/rtsp/sdp
+github.com/jinleileiking/joy4/format/ts
+github.com/jinleileiking/joy4/format/ts/tsio
+github.com/jinleileiking/joy4/utils/bits
+github.com/jinleileiking/joy4/utils/bits/pio
+# github.com/mattn/go-runewidth v0.0.2
+## explicit
+github.com/mattn/go-runewidth
+# github.com/olekukonko/tablewriter v0.0.0-20180506121414-d4647c9c7a84
+## explicit
+github.com/olekukonko/tablewriter
+# github.com/spf13/cobra v1.4.0
+## explicit; go 1.15
+github.com/spf13/cobra
+# github.com/spf13/pflag v1.0.5
+## explicit; go 1.12
+github.com/spf13/pflag
+# gopkg.in/alecthomas/kingpin.v2 v2.2.6
+## explicit

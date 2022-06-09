@@ -14,6 +14,7 @@ import (
 	"github.com/jinleileiking/joy4/codec/h264parser"
 	"github.com/jinleileiking/joy4/format"
 	"github.com/jinleileiking/joy4/format/ts"
+
 	// "github.com/nareix/joy4/av"
 	// "github.com/nareix/joy4/av/avutil"
 	// "github.com/nareix/joy4/format"
@@ -277,8 +278,8 @@ func setup_cmd() {
 	rootCmd.PersistentFlags().BoolVar(&show_sei, "sei", false, "show sei info")
 	rootCmd.PersistentFlags().BoolVar(&show_only_nalt, "simple", false, "only show nal type")
 	rootCmd.PersistentFlags().BoolVar(&show_a, "a", false, "show audio")
-	rootCmd.PersistentFlags().BoolVar(&show_v, "v", true, "show video")
-	rootCmd.PersistentFlags().BoolVar(&no_show_i, "non-key", false, "use with -v:  do not show keyframes")
+	rootCmd.PersistentFlags().BoolVar(&show_v, "v", true, "show video,  default:true")
+	rootCmd.PersistentFlags().BoolVar(&no_show_i, "non-key", false, "use with -v:  show BP frames")
 	rootCmd.MarkFlagRequired("file")
 }
 
