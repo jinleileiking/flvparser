@@ -8,9 +8,9 @@ Usage:
 
 Flags:
       --a             show audio
-  -f, --file string   flv / ts file
+  -f, --file string   flv / ts file, required
   -h, --help          help for flvparser
-      --non-key       use with -v:  do not show keyframes
+      --non-key       use with -v:  show BP frames
       --sei           show sei info
       --simple        only show nal type
       --v             show video (default true)
