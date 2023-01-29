@@ -1,4 +1,4 @@
-module flvparser
+module github.com/jinleileiking/flvparser
 
 go 1.17
 
